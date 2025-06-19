@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>ChatHoo - GPT 챗봇</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #e5ddd5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .chat-container {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: space-between;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      margin: 8px 0;
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      line-height: 1.4;
+      word-break: break-word;
+      display: inline-block;
+      clear: both;
+    }
+
+    .user {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+
+    .bot {
+      background-color: #ffffff;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 10px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 16px;
+      margin-left: 10px;
+      font-size: 16px;
+      background-color: #128c7e;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #075e54;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox"></div>
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="메시지를 입력하세요...">
+      <button onclick="sendMessage()">전송</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chatBox");
+
+    function appendMessage(text, type, save = true) {
+      const msg = document.createElement("div");
+      msg.className = `message ${type}`;
+      msg.innerText = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      if (save) {
+        const history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+        history.push({ text, type });
+        localStorage.setItem("chatHistory", JSON.stringify(history));
+      }
+    }
+
+    function loadHistory() {
+      const history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+      history.forEach(msg => appendMessage(msg.text, msg.type, false));
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage(message, "user");
+      input.value = "";
+
+      appendMessage("...", "bot");
+
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzUYxO8O1lhWUPpIaHkCGiMA4olMqT7Vkw-NMtiJbqTK1eXe6Cc9BBD3lGX32Yh5Iui7w/exec", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        document.querySelector(".bot:last-child").remove();
+        appendMessage(data.reply, "bot");
+
+      } catch (err) {
+        document.querySelector(".bot:last-child").remove();
+        appendMessage("⚠️ 오류 발생. 다시 시도해주세요.", "bot");
+      }
+    }
+
+    // 엔터로 전송
+    document.getElementById("userInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    // 로딩 시 히스토리 불러오기
+    window.onload = loadHistory;
+  </script>
+</body>
+</html>
