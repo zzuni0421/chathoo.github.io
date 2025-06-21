@@ -129,7 +129,7 @@
       appendMessage("...", "bot");
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbyAV0_ZpyI_ArS0hQAkSHHAFmLnwixDcV_iMP_0hp8GNUUp-B2JDaTOEo_a9X7WLbEtBg/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxksgjQBgHEiR5DLj9IyGsAt-sLAxpVBLZ2hG9UCmzxNqhNd4Pj_mRbnj9K8rhCkovdnQ/exec", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message })
@@ -163,7 +163,7 @@
   document.getElementById("chat-form").onsubmit = async (e) => {
     e.preventDefault();
     const q = document.getElementById("question").value;
-    const res = await fetch("https://script.google.com/macros/s/AKfycbyAV0_ZpyI_ArS0hQAkSHHAFmLnwixDcV_iMP_0hp8GNUUp-B2JDaTOEo_a9X7WLbEtBg/exec?q=" + encodeURIComponent(q));
+    const res = await fetch("https://script.google.com/macros/s/AKfycbxksgjQBgHEiR5DLj9IyGsAt-sLAxpVBLZ2hG9UCmzxNqhNd4Pj_mRbnj9K8rhCkovdnQ/exec?q=" + encodeURIComponent(q));
     const text = await res.text();
     if (text.startsWith("http")) {
       document.getElementById("response").innerHTML = `<img src="${text}" width="256" />`;
