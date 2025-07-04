@@ -14,7 +14,7 @@
   <h1>chathoo 지피티</h1>
   <textarea id="input" placeholder="질문을 입력하세요"></textarea><br>
   <button onclick="ask()">질문하기</button>
-  <div id="response" class="response">응답 준비됨. 실험용 봇입니다.</div>
+  <div id="response" class="response">응답 준비됨. 실험중. 사용 금지</div>
 
   <script>
     async function ask() {
@@ -23,7 +23,7 @@
       resDiv.innerText = "생각 중...";
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwX_fThuUQWF0REzhB93wq76TFSfTvCG_flT8s0MyzlXuTpLO7WxiDWDD-1MvzH5JLCCg/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbyUcFhEW0d46n51zsoY8gqsCyBz9UpwwtcirHtcVYGbv4YjhikS27d92_e6e8lyPRNhzA/exec", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ input })
