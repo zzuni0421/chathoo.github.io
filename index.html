@@ -37,7 +37,7 @@
       chatDiv.scrollTop = chatDiv.scrollHeight;
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbylXTyToDQZO1ZlfQGyOeFW3z7i7SCOtM8YH7-PaLm6Em8U_44L0gyg26QlrbPYCr9BGg/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzWwf-dxSrSI8gRDQT6YK7g4Xl3PLDFIsTl_9TXv6cRM8YLBD-NDgE-e1Yef4R_wLyLyA/exec", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ input })
@@ -50,7 +50,7 @@
         chatDiv.scrollTop = chatDiv.scrollHeight;
 
       } catch (err) {
-        chatDiv.querySelectorAll(".bot").pop().innerText = "❌ 오류 발생: " + err.message;
+        chatDiv.querySelectorAll(".bot").at(-1).innerText = "❌ 오류 발생: " + err.message;
         chatDiv.scrollTop = chatDiv.scrollHeight;
       }
     }
