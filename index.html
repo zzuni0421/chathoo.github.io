@@ -51,7 +51,9 @@
         appendMessage(data.choices[0].message.content, 'bot');
 
       } catch (err) {
-        document.querySelectorAll('.bot').pop().remove();
+const bots = document.querySelectorAll('.bot');
+if (bots.length) bots[bots.length - 1].remove();
+
         appendMessage("❌ 오류 발생: " + err.message, 'bot');
       }
     }
