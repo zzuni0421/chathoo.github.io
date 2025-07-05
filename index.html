@@ -1,114 +1,60 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Chathoo GPT</title>
-  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <title>Chat GPT</title>
   <style>
-    body {
-      font-family: 'Pretendard', sans-serif;
-      background: #f1f1f1;
-      margin: 0;
-      padding: 20px;
-    }
-    .chat-container {
-      max-width: 500px;
-      margin: 30px auto;
-      background: #fff;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-    .bubble {
-      display: inline-block;
-      padding: 10px 14px;
-      margin: 8px 0;
-      border-radius: 18px;
-      max-width: 80%;
-      word-wrap: break-word;
-    }
-    .user {
-      background: #ffeb3b;
-      align-self: flex-end;
-      margin-left: auto;
-      border-bottom-right-radius: 0;
-    }
-    .bot {
-      background: #e0e0e0;
-      align-self: flex-start;
-      margin-right: auto;
-      border-bottom-left-radius: 0;
-    }
-    .input-box {
-      display: flex;
-      margin-top: 20px;
-    }
-    input[type="text"] {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-    }
-    button {
-      padding: 10px 20px;
-      margin-left: 8px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background: #333;
-      color: #fff;
-      cursor: pointer;
-    }
+    body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+    .chat-box { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .message { display: flex; margin: 10px 0; }
+    .user { background: #ffeb3b; padding: 10px 14px; border-radius: 18px; margin-left: auto; }
+    .bot { background: #e0e0e0; padding: 10px 14px; border-radius: 18px; margin-right: auto; }
+    .input-area { display: flex; margin-top: 20px; }
+    input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+    button { background: #333; color: #fff; border: none; padding: 10px 20px; margin-left: 10px; border-radius: 6px; cursor: pointer; }
   </style>
 </head>
 <body>
+  <div class="chat-box" id="chat"></div>
+  <div class="input-area">
+    <input id="input" placeholder="메시지를 입력하세요.">
+    <button onclick="send()">전송</button>
+  </div>
 
-<div class="chat-container" id="chat">
-</div>
+  <script>
+    const endpoint = 'https://script.google.com/macros/s/AKfycbxynxZp_kf9EMETDGlMr0yc1pPl9QRbvJz2EWqv8ttIvoD3kjZ811d8lyYKGDsdk5lVEA/exec';
 
-<div class="input-box">
-  <input type="text" id="messageInput" placeholder="메시지를 입력하세요.">
-  <button onclick="sendMessage()">전송</button>
-</div>
-
-<script>
-  const apiUrl = "https://script.google.com/macros/s/AKfycbwuZ7ZndRtFPPh6q9TkVfVfvFM5S__w9wjuNdWw-0Ue6G7u41W2IYvBlvo9JgvlDS_How/exec";
-
-  function addBubble(text, type) {
-    const chat = document.getElementById("chat");
-    const bubble = document.createElement("div");
-    bubble.className = "bubble " + type;
-    bubble.innerText = text;
-    chat.appendChild(bubble);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  async function sendMessage() {
-    const input = document.getElementById("messageInput");
-    const text = input.value.trim();
-    if (!text) return;
-
-    addBubble(text, "user");
-    input.value = "";
-
-    try {
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: text })
-      });
-
-      const data = await res.json();
-      const reply = data.choices?.[0]?.message?.content || "응답 없음";
-      addBubble(reply, "bot");
-
-    } catch (e) {
-      addBubble("❌ 오류 발생: " + e.message, "bot");
+    function appendMessage(content, type) {
+      const div = document.createElement('div');
+      div.className = 'message ' + (type === 'user' ? 'user' : 'bot');
+      div.innerText = content;
+      document.getElementById('chat').appendChild(div);
     }
-  }
-</script>
 
+    async function send() {
+      const input = document.getElementById('input').value;
+      if (!input) return;
+      appendMessage(input, 'user');
+      document.getElementById('input').value = '';
+
+      appendMessage('⏳ 생각 중...', 'bot');
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ input })
+        });
+
+        const data = await response.json();
+        document.querySelectorAll('.bot').pop().remove();
+        appendMessage(data.choices[0].message.content, 'bot');
+
+      } catch (err) {
+        document.querySelectorAll('.bot').pop().remove();
+        appendMessage("❌ 오류 발생: " + err.message, 'bot');
+      }
+    }
+  </script>
 </body>
 </html>
