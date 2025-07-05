@@ -50,7 +50,7 @@
         chatDiv.scrollTop = chatDiv.scrollHeight;
 
       } catch (err) {
-        chatDiv.querySelectorAll(".bot").at(-1).innerText = "❌ 오류 발생: " + err.message;
+       Array.from(chatDiv.querySelectorAll(".bot")).slice(-1)[0].innerText = "❌ 오류 발생: " + err.message;
         chatDiv.scrollTop = chatDiv.scrollHeight;
       }
     }
